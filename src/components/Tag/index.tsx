@@ -1,11 +1,11 @@
 import {ArrowDownIcon, ArrowUpIcon, CloseIcon, EditIcon, SearchIcon, TrashIcon} from '@sanity/icons'
 import {Box, Button, Container, Flex, Text, Tooltip} from '@sanity/ui'
 import {SearchFacetInputSearchableProps, TagActions, TagItem} from '@types'
-import React, {ReactNode} from 'react'
+import {ReactNode} from 'react'
 import {useDispatch} from 'react-redux'
 import styled from 'styled-components'
 import {inputs} from '../../config/searchFacets'
-import {PANEL_HEIGHT} from '../../constants'
+import {PANEL_HEIGHT, TAG_DOCUMENT_NAME} from '../../constants'
 import useTypedSelector from '../../hooks/useTypedSelector'
 import {selectAssetsPicked} from '../../modules/assets'
 import {dialogActions} from '../../modules/dialog'
@@ -77,6 +77,8 @@ const Tag = (props: Props) => {
   const dispatch = useDispatch()
   const assetsPicked = useTypedSelector(selectAssetsPicked)
   const isSearchFacetTag = useTypedSelector(state => selectIsSearchFacetTag(state, tag?.tag?._id))
+  const panelType = useTypedSelector(state => state.tags.panelType)
+  const textType = panelType === TAG_DOCUMENT_NAME ? 'tag' : 'project'
 
   // Callbacks
   const handleSearchFacetTagRemove = () => {
@@ -100,8 +102,10 @@ const Tag = (props: Props) => {
   }
 
   const handleSearchFacetTagAddOrUpdate = () => {
+    const inputsTag = panelType === TAG_DOCUMENT_NAME ? inputs.tag : inputs.project
+
     const searchFacet = {
-      ...inputs.tag,
+      ...inputsTag,
       value: {
         label: tag?.tag?.name?.current,
         value: tag?.tag?._id
@@ -146,7 +150,7 @@ const Tag = (props: Props) => {
             onClick={
               isSearchFacetTag ? handleSearchFacetTagRemove : handleSearchFacetTagAddOrUpdate
             }
-            tooltip={isSearchFacetTag ? 'Remove filter' : 'Filter by tag'}
+            tooltip={isSearchFacetTag ? 'Remove filter' : `Filter by ${textType}`}
           />
         )}
         {/* Edit icon */}
@@ -156,7 +160,7 @@ const Tag = (props: Props) => {
             icon={<EditIcon />}
             onClick={handleShowTagEditDialog}
             tone="primary"
-            tooltip="Edit tag"
+            tooltip={`Edit ${textType}`}
           />
         )}
         {/* Apply to all */}
@@ -166,7 +170,7 @@ const Tag = (props: Props) => {
             icon={<ArrowUpIcon />}
             onClick={handleShowAddTagToAssetsDialog}
             tone="primary"
-            tooltip="Add tag to selected assets"
+            tooltip={`Add ${textType} to selected assets`}
           />
         )}
         {/* Remove from all */}
@@ -176,7 +180,7 @@ const Tag = (props: Props) => {
             icon={<ArrowDownIcon />}
             onClick={handleShowRemoveTagFromAssetsDialog}
             tone="critical"
-            tooltip="Remove tag from selected assets"
+            tooltip={`Remove ${textType} from selected assets`}
           />
         )}
 
@@ -187,7 +191,7 @@ const Tag = (props: Props) => {
             icon={<TrashIcon />}
             onClick={handleShowTagDeleteDialog}
             tone="critical"
-            tooltip="Delete tag"
+            tooltip={`Delete ${textType}`}
           />
         )}
       </ButtonContainer>

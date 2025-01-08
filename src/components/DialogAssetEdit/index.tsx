@@ -16,11 +16,12 @@ import {selectTagSelectOptions} from '../../modules/tags'
 import {getUniqueDocuments} from '../../utils/getUniqueDocuments'
 import imageDprUrl from '../../utils/imageDprUrl'
 import sanitizeFormData from '../../utils/sanitizeFormData'
-import {isFileAsset, isImageAsset} from '../../utils/typeGuards'
+import {isFileAsset, isImageAsset, isPdfAsset} from '../../utils/typeGuards'
 import AssetMetadata from '../AssetMetadata'
 import Dialog from '../Dialog'
 import DocumentList from '../DocumentList'
 import FileAssetPreview from '../FileAssetPreview'
+import FilePdf from '../FilePdf'
 import FormFieldInputText from '../FormFieldInputText'
 import FormFieldInputTextarea from '../FormFieldInputTextarea'
 import FormFieldTags from '../FormFieldTags'
@@ -142,7 +143,8 @@ const DialogAssetEdit = (props: Props) => {
                     _ref: tag.value,
                     _type: 'reference',
                     _weak: true
-                  })) || null
+                  })) || null,
+                preview: assetItem?.asset?.opt?.media?.preview || null
               }
             }
           }
@@ -378,6 +380,9 @@ const DialogAssetEdit = (props: Props) => {
 
         <Box flex={1} padding={4}>
           <Box style={{aspectRatio: '1'}}>
+            {/* File pdf */}
+            {isPdfAsset(currentAsset) && <FilePdf url={currentAsset.url} />}
+
             {/* File */}
             {isFileAsset(currentAsset) && <FileAssetPreview asset={currentAsset} />}
 
